@@ -1,9 +1,6 @@
-function randomInt(min, max) {
-  // [min, max)
-  const range = max - min;
+import {selectByProportionateFitness, selectByTournament} from './ga/selection';
+import {randomInt} from './ga/utils';
 
-  return Math.floor(Math.random() * range + min);
-}
 
 function randomBase(bases) {
   return bases[randomInt(0, bases.length)];
@@ -15,11 +12,11 @@ function *generateChromosome(bases, length) {
   }
 }
 
-function generateChromosomes(size, bases, length, fitnessFn) {
+function generatePool(size, chromosomeGenerator, fitnessFn) {
   let chromosomes = [];
 
   for (let ii = 0; ii < size; ii++) {
-    chromosomes.push([...generateChromosome(bases, length)]);
+    chromosomes.push([...chromosomeGenerator()]);
   }
 
   sortByDescendingFitness(chromosomes, fitnessFn);
@@ -100,86 +97,6 @@ function sortByDescendingFitness(chromosomes, fitnessFn) {
   chromosomes.sort((ca, cb) => fitnessFn(cb) - fitnessFn(ca));
 }
 
-function tournamentChooseOne(size, fitnessFn, population) {
-  // assert population.length > 0
-
-  // Choose a single chromosome by holding a tournament between `size` random
-  // participant chromosomes in the `population`, and selecting the fittest.
-  let selections = Array(size)
-    // gotcha, map won't work on an array of undefined's
-    .fill(0)
-    .map(() => randomInt(0, population.length))
-    .map(position => population[position]);
-
-  // Find the chromosome with the largest fitness
-  return selections.reduce((ca, cb) => fitnessFn(ca) > fitnessFn(cb) ? ca : cb);
-}
-
-/*
- * Choose a pair of chromosomes by tournaments of `size`.
- *
- * This may select the same chromosome twice.
- *
- * Returns a list of two Organism instances.
- */
-function selectByTournament(size, fitnessFn, population) {
-  return [
-    tournamentChooseOne(size, fitnessFn, population),
-    tournamentChooseOne(size, fitnessFn, population)
-  ];
-}
-
-/*
- * Choose a pair of chromosomes randomly, but where each chromosome has
- * a likelyhood of being selected proportional to its fitness.
- *
- * This may select the same chromosome twice.
- *
- * Returns a list of two Organism instances.
- */
-function selectByProportionateFitness(totalFitness, fitnessFn, population) {
-  let selections = [];
-
-  // Continue until we have made two selections.
-  // This loop should not run more than twice.
-  while (selections.length < 2) {
-    // Choose a random value in the range from 0 to the sum of all
-    // of the fitness values of the chromosomes in this population.
-    const randomValue = Math.floor(Math.random() * totalFitness);
-    let accumulatedFitness = 0.0;
-
-    // Iterate through all chromosomes in the population,
-    // accumulating their fitness, until a selection is made.
-    for (const chromosome of population) {
-      const fitness = fitnessFn(chromosome);
-
-      // If the random value is in the proportional subrange
-      // of fitness of this chromosome
-      if (randomValue >= accumulatedFitness && randomValue < accumulatedFitness + fitness) {
-        // select it
-        selections.push(chromosome);
-        // search for the next random selection
-        break;
-      } else {
-        accumulatedFitness += fitness;
-      }
-    }
-  }
-
-  return selections;
-}
-
-function select(fitnessFn, selectionMechanism, tournamentSize, population) {
-  if (selectionMechanism === 'tournament') {
-    return selectByTournament(tournamentSize, fitnessFn, population);
-  } else if (selectionMechanism === 'fitness-proportionate') {
-    const totalFitness = population.map(fitnessFn).reduce((fa, fb) => fa + fb, 0);
-
-    return selectByProportionateFitness(totalFitness, fitnessFn, population);
-  }
-
-  throw new Error(`Unknown selection mechanism ${selectionMechanism}.`);
-}
 
 /*
  * To make this a little more general purpose, this takes an
@@ -188,7 +105,7 @@ function select(fitnessFn, selectionMechanism, tournamentSize, population) {
  * and then 7 and 1 are not). Chromosomes are not
  * crossed over with themselves.
  */
-function breed(bases, mutationChance, crossoverChance, population) {
+function breed(mutator, crossoverChance, population) {
   let newChromosomes = [];
 
   /*
@@ -213,49 +130,71 @@ function breed(bases, mutationChance, crossoverChance, population) {
     }
   }
 
-  return newChromosomes
-    .map(
-      mutateChromosome.bind(null, bases, mutationChance)
-    );
+  return newChromosomes.map(mutator);
 }
 
+/* eslint-disable no-new-func */
+function buildFitnessFunction(fitnessFunctionSource) {
+  return Function('chromosome', fitnessFunctionSource);
+}
+
+/* eslint-enable no-new-func */
+
 export class GA {
-  constructor(opts, chromosomes = null, previousGenerations = []) {
-    if (opts.fitnessFn) {
-      this.fitnessFn = opts.fitnessFn;
-    } else {
-      this.fitnessFn = Function('chromosome', opts.fitnessFunction);
+  static fromSettings(settings) {
+    let preparedSettings = Object.assign({}, settings);
+
+    preparedSettings.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
+
+    function chromosomeGenerator() {
+      return generateChromosome(settings.bases, settings.chromosomeLength);
     }
 
-    if (chromosomes === null) {
-      this.chromosomes = generateChromosomes(opts.startingPopulation, opts.bases, opts.chromosomeLength, this.fitnessFn);
-    } else {
-      this.chromosomes = chromosomes;
-    }
+    let chromosomes = generatePool(settings.startingPopulation, chromosomeGenerator, preparedSettings.fitnessFn);
+
+    return new GA(preparedSettings, chromosomes, []);
+  }
+
+  constructor(settings, chromosomes, previousGenerations) {
+    this.fitnessFn = settings.fitnessFn;
+    this.chromosomes = chromosomes;
     // assert this.chromosomes is sorted by fitness descending.
 
-    this.elitism = opts.elitism ? opts.selectionElitism : 0;
-    this.tournamentSize = opts.tournamentSize;
-    this.bases = opts.bases;
-    this.selectionMechanism = opts.selectionMechanism;
-    this.crossoverChance = opts.crossoverChance;
-    this.mutationChance = opts.mutationChance;
+    this.elitism = settings.elitism ? settings.selectionElitism : 0;
+    this.tournamentSize = settings.tournamentSize;
+    this.bases = settings.bases;
+    this.selectionMechanism = settings.selectionMechanism;
+    this.crossoverChance = settings.crossoverChance;
+    this.mutationChance = settings.mutationChance;
 
     this.generation = previousGenerations.length;
     this.previousGenerations = previousGenerations;
+  }
+
+  select() {
+    if (this.selectionMechanism === 'tournament') {
+      return selectByTournament(this.tournamentSize, this.fitnessFn, this.chromosomes);
+    } else if (this.selectionMechanism === 'fitness-proportionate') {
+      return selectByProportionateFitness(this.fitnessFn, this.chromosomes);
+    }
+
+    throw new Error(`Unknown selection mechanism ${this.selectionMechanism}.`);
   }
 
   step() {
     // choose elite
     let pool = this.chromosomes.slice(0, Math.ceil(this.elitism * this.chromosomes.length));
 
+    const mutator = (chromosome) =>
+      mutateChromosome(this.bases, this.mutationChance, chromosome);
+
     // pick remaining in pairs, until we have as many as the existing population
     // breeding each pair
     while (pool.length < this.chromosomes.length) {
       pool = pool.concat(
         breed(
-          this.bases, this.mutationChance, this.crossoverChance,
-          select(
+          mutator, this.crossoverChance,
+          this.select(
             this.fitnessFn,
             this.selectionMechanism,
             this.tournamentSize,

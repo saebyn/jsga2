@@ -28,7 +28,7 @@ export class Population extends Component {
     const settings = JSON.parse(props.location.query.settings);
 
     this.state = {
-      ga: new GA(settings),
+      ga: GA.fromSettings(settings),
       settings,
       generation: 0,
       page: 0,
