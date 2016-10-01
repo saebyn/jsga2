@@ -1,33 +1,17 @@
 import React, {Component} from 'react';
 
-import {ChromosomeAbstract} from './chromosome_abstract';
+import {findBaseColors} from './chromosome_abstract';
 
 
-export class Chromosomes extends Component {
-  findBaseColors(bases) {
-    return new Map(
-      bases.map(
-        (base, index) => [base, 360.0 / bases.length * index]
-      ).map(
-        ([base, color]) =>
-          [base, {color, inverse: (color + 180) % 360}]
-      )
-    );
-  }
-
+export class ChromosomesLegend extends Component {
   render() {
     const {ga, generation, page, pageSize} = this.props;
-    const baseColors = this.findBaseColors(ga.getBases());
+    const baseColors = findBaseColors(ga.getBases());
     const viewStart = page * pageSize;
     const viewEnd = (page + 1) * pageSize;
     const chromosomes = ga.view(viewStart, viewEnd, generation);
     const generations = ga.countGenerations();
     const totalChromosomes = ga.count();
-    const style = {
-      width: '10%',
-      display: 'inline-block',
-      margin: '5px',
-    };
 
     function getSampleStyle(base) {
       const {color, inverse} = baseColors.get(base);
@@ -44,8 +28,8 @@ export class Chromosomes extends Component {
     }
 
     return (
-      <div>
-        <dl>
+      <div className="card">
+        <dl className="card-block">
           <dt>Generation</dt>
           <dd><strong>{generations - generation}</strong> of <strong>{generations}</strong></dd>
 
@@ -62,14 +46,6 @@ export class Chromosomes extends Component {
             </ul>
           </dd>
         </dl>
-        <div>
-          {chromosomes.map(
-            (chromosome, index) =>
-              <div key={index} style={style}>
-                <ChromosomeAbstract baseColors={baseColors} chromosome={chromosome} />
-              </div>
-          )}
-        </div>
       </div>
     );
   }

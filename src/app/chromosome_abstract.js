@@ -1,6 +1,18 @@
 import React, {Component} from 'react';
 
 
+export function findBaseColors(bases) {
+  return new Map(
+    bases.map(
+      (base, index) => [base, 360.0 / bases.length * index]
+    ).map(
+      ([base, color]) =>
+        [base, {color, inverse: (color + 180) % 360}]
+    )
+  );
+}
+
+
 export class ChromosomeAbstract extends Component {
   getBaseColor(thisBase) {
     const hue = this.props.baseColors.get(thisBase).color;

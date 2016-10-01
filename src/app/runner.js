@@ -48,16 +48,16 @@ export class Runner extends Component {
     let {steps, timeoutId} = this.state;
 
     return (
-      <div className="card form-group">
+      <div className="form-group">
         <button
-          className="btn btn-primary col-sm-1"
+          className="btn btn-primary col-xs-2 col-sm-1"
           disabled={timeoutId !== null}
           onClick={this.handleStep}>Step</button>
         <button
-          className="btn col-sm-2 offset-sm-1"
+          className="btn col-sm-2 col-xs-3"
           disabled={timeoutId !== null}
           onClick={this.handleRun}>Run for ...</button>
-        <div className="col-sm-2">
+        <div className="col-sm-2 col-xs-3">
           <input
             type="number"
             className="form-control"
@@ -68,7 +68,7 @@ export class Runner extends Component {
           <label>Steps</label>
         </div>
         <button
-          className="btn btn-danger offset-sm-3 col-sm-1"
+          className="btn btn-danger offset-xs-2 col-sm-1 col-xs-2"
           disabled={timeoutId === null}
           onClick={this.handleStop}
           >

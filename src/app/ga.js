@@ -224,7 +224,7 @@ export class GA {
     if (opts.fitnessFn) {
       this.fitnessFn = opts.fitnessFn;
     } else {
-      this.fitnessFn = Function('chromosome', `return ${opts.fitnessFunction}`);
+      this.fitnessFn = Function('chromosome', opts.fitnessFunction);
     }
 
     if (chromosomes === null) {

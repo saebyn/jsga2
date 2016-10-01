@@ -1,4 +1,4 @@
-/* eslint react/prop-types: 0 */
+/* global ace */
 import React, {Component} from 'react';
 
 const CENT = 100.0;
@@ -8,7 +8,12 @@ function getDefaults() {
   return {
     bases: [1, 2, 3, 4],
     startingPopulation: 100,
-    fitnessFunction: 'chromosome.reduce(function (accum, num) { return accum + num }, 0) / chromosome.length',
+    fitnessFunction: `return chromosome.reduce(
+  function (accum, num) {
+    return accum + num;
+  },
+  0
+) / chromosome.length;`,
     chromosomeLength: 200,
     selectionMechanism: 'tournament',
     tournamentSize: 10,
@@ -57,13 +62,22 @@ export class PopulationSettings extends Component {
     };
 
     this.handleCreate = () => {
-      this.props.onCreate(this.state);
+      this.context.router.push({
+        pathname: '/simulation',
+        query: {settings: JSON.stringify(this.state)},
+      });
     };
 
     this.handleReset = () => {
       this.setState(getDefaults());
-      this.props.onReset();
     };
+  }
+
+  componentDidMount() {
+    let editor = ace.edit(this.refs.editor);
+
+    editor.getSession().setMode('ace/mode/javascript');
+    setTimeout(() => editor.resize());
   }
 
   render() {
@@ -87,13 +101,6 @@ export class PopulationSettings extends Component {
           </div>
           <div className="form-group">
             <label>
-              Fitness function
-            </label>
-            <textarea className="form-control" rows="5" onChange={this.handleFitnessFunction} value={fitnessFunction}></textarea>
-            <small className="form-text text-muted">This should be a <em>Javascript expression</em> that evaluates to the calculated fitness for a given <code>chromosome</code>.</small>
-          </div>
-          <div className="form-group">
-            <label>
               Chromosome length
             </label>
             <input
@@ -104,6 +111,13 @@ export class PopulationSettings extends Component {
               onChange={this.handleChromosomeLength}
               />
             <small className="form-text text-muted">How many bases should each chromosome have?</small>
+          </div>
+          <div className="form-group">
+            <label>
+              Fitness function
+            </label>
+            <textarea ref="editor" className="form-control ace" rows="5" cols="80" onChange={this.handleFitnessFunction} value={fitnessFunction}></textarea>
+            <small className="form-text text-muted">This should be <em>Javascript</em> that returns the calculated fitness for a given <code>chromosome</code>.</small>
           </div>
           <div className="form-group">
             <legend className="col-form-legend">
@@ -215,10 +229,10 @@ export class PopulationSettings extends Component {
           </div>
 
           <div className="form-group row">
-            <div className="col-sm-2">
+            <div className="col-xs-2">
               <button className="btn btn-danger" onClick={this.handleReset} type="button">Reset</button>
             </div>
-            <div className="offset-sm-4 col-sm-2">
+            <div className="offset-xs-4 col-xs-2">
               <button className="btn btn-primary" onClick={this.handleCreate} type="button">Populate</button>
             </div>
           </div>
@@ -227,3 +241,7 @@ export class PopulationSettings extends Component {
     );
   }
 }
+
+PopulationSettings.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};

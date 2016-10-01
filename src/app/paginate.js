@@ -20,38 +20,36 @@ export class Paginate extends Component {
     return (
       <ul className="pagination pagination-lg">
         <li className="page-item">
-          <a
+          <button
             onClick={this.handleGotoPage.bind(this, currentPage === 0 ? 0 : currentPage - 1)}
-            href="#"
-            className="page-link"
+            className="page-link btn-link"
             aria-label="Previous">
              <span aria-hidden="true">&laquo;</span>
              <span className="sr-only">Previous</span>
-          </a>
+          </button>
         </li>
         {
           [...Array(pages).keys()].map(
             (pageIndex) =>
               <li className={itemClasser(pageIndex)} key={pageIndex}>
-                <a
+                <button
                   onClick={this.handleGotoPage.bind(this, pageIndex)}
                   href="#"
-                  className="page-link"
+                  className="page-link btn-link"
                   >
                   {pageIndex + 1}
-                </a>
+                </button>
               </li>
           )
         }
         <li className="page-item">
-          <a
+          <button
             onClick={this.handleGotoPage.bind(this, currentPage === pages - 1 ? pages - 1 : currentPage + 1)}
-            href="#"
-            className="page-link"
+            className="page-link btn-link"
             aria-label="Next">
              <span className="sr-only">Next</span>
              <span aria-hidden="true">&raquo;</span>
-          </a>
+          </button>
         </li>
       </ul>
     );

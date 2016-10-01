@@ -8,16 +8,25 @@
 @import "bootstrap/grid";
 @import "bootstrap/utilities";
 
-@import "bootstrap/code";
-@import "bootstrap/card";
-@import "bootstrap/forms";
+@import "bootstrap/breadcrumb";
 @import "bootstrap/buttons";
-@import "bootstrap/input-group";
+@import "bootstrap/card";
+@import "bootstrap/code";
 @import "bootstrap/custom-forms";
+@import "bootstrap/forms";
+@import "bootstrap/input-group";
+@import "bootstrap/jumbotron";
 @import "bootstrap/list-group";
+@import "bootstrap/nav";
+@import "bootstrap/navbar";
 @import "bootstrap/pagination";
 
 
 input[type="number"] {
   text-align: right;
+}
+
+
+.ace_editor {
+  min-height: 8em;
 }
