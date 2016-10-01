@@ -13,7 +13,7 @@ function getDefaults() {
     /* eslint-enable no-magic-numbers */
 
     startingPopulation: 100,
-    fitnessFunction: `return chromosome.reduce(
+    fitnessFunctionSource: `return chromosome.reduce(
   function (accum, num) {
     return accum + num;
   },
@@ -42,7 +42,7 @@ export class PopulationSettings extends Component {
       this.setState({key: parseFloat(value) / CENT});
 
     this.handleFitnessFunction = ({target: {value}}) =>
-      this.setState({fitnessFunction: value});
+      this.setState({fitnessFunctionSource: value});
 
     this.handleElitism = ({target: {checked}}) =>
       this.setState({elitism: checked});
@@ -73,7 +73,7 @@ export class PopulationSettings extends Component {
   }
 
   render() {
-    let {startingPopulation, fitnessFunction, chromosomeLength, selectionMechanism, tournamentSize, elitism, selectionElitism, crossoverChance, mutationChance} = this.state;
+    let {startingPopulation, fitnessFunctionSource, chromosomeLength, selectionMechanism, tournamentSize, elitism, selectionElitism, crossoverChance, mutationChance} = this.state;
 
     return (
       <div>
@@ -108,7 +108,7 @@ export class PopulationSettings extends Component {
             <label>
               Fitness function
             </label>
-            <textarea ref="editor" className="form-control ace" rows="5" cols="80" onChange={this.handleFitnessFunction} value={fitnessFunction}></textarea>
+            <textarea ref="editor" className="form-control ace" rows="5" cols="80" onChange={this.handleFitnessFunction} value={fitnessFunctionSource}></textarea>
             <small className="form-text text-muted">This should be <em>Javascript</em> that returns the calculated fitness for a given <code>chromosome</code>.</small>
           </div>
           <div className="form-group">
