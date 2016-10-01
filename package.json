@@ -57,7 +57,8 @@
     "serve": "gulp serve",
     "serve:dist": "gulp serve:dist",
     "test": "gulp test",
-    "test:auto": "gulp test:auto"
+    "test:auto": "gulp test:auto",
+    "deploy": "aws s3 sync dist/ s3://jsga2.saebyn.info/ --acl public-read"
   },
   "eslintConfig": {
     "root": true,
