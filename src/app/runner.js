@@ -54,7 +54,7 @@ export class Runner extends Component {
     return (
       <div className="form-group">
         <button
-          className="btn btn-primary col-xs-2 col-sm-1"
+          className="btn btn-primary col-xs-2 col-md-1 col-sm-2"
           disabled={timeoutId !== null}
           onClick={this.handleStep}>Step</button>
         <button
@@ -72,7 +72,7 @@ export class Runner extends Component {
           <label>Steps</label>
         </div>
         <button
-          className="btn btn-danger offset-xs-2 col-sm-1 col-xs-2"
+          className="btn btn-danger offset-xs-2 col-md-1 col-sm-2 col-xs-2"
           disabled={timeoutId === null}
           onClick={this.handleStop}
           >

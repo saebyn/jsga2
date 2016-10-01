@@ -78,7 +78,7 @@ export class Population extends Component {
             ga={ga}
             />
         </div>
-        <div className="row">
+        <div className="row pagination-container">
           <Paginate
             onGotoPage={this.handleGotoPage}
             currentPage={page}
