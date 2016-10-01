@@ -179,7 +179,7 @@ export class PopulationSettings extends Component {
                 min="1" max="100"
                 step="any"
                 value={selectionElitism * CENT}
-                onChange={this.handlePercent(this, 'selectionElitism')}
+                onChange={this.handlePercent.bind(this, 'selectionElitism')}
                 />
               <div className="input-group-addon">%</div>
             </div>
@@ -196,7 +196,7 @@ export class PopulationSettings extends Component {
                 min="0" max="100"
                 step="any"
                 value={crossoverChance * CENT}
-                onChange={this.handlePercent(this, 'crossoverChance')}
+                onChange={this.handlePercent.bind(this, 'crossoverChance')}
                 />
               <div className="input-group-addon">%</div>
             </div>
@@ -213,7 +213,7 @@ export class PopulationSettings extends Component {
                 min="0" max="100"
                 step="any"
                 value={mutationChance * CENT}
-                onChange={this.handlePercent(this, 'mutationChance')}
+                onChange={this.handlePercent.bind(this, 'mutationChance')}
                 />
               <div className="input-group-addon">%</div>
             </div>
