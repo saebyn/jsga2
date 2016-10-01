@@ -1,10 +1,16 @@
 import React, {Component} from 'react';
 
+import {contrastHue} from './chromosome_abstract';
+
 
 export class Chromosome extends Component {
+  static propTypes = {
+    baseColors: React.PropTypes.instanceOf(Map).isRequired,
+    chromosome: React.PropTypes.array.isRequired,
+  }
+
   getBaseStyle(thisBase) {
     const hue = this.props.baseColors.get(thisBase);
-    const contrastHue = (hue + 180) % 360;
 
     return {
       display: 'inline-block',
@@ -16,7 +22,7 @@ export class Chromosome extends Component {
       verticalAlign: 'middle',
       fontWeight: 'bold',
       backgroundColor: `hsla(${hue}, 50%, 80%, 1)`,
-      color: `hsla(${contrastHue}, 50%, 30%, 1)`
+      color: `hsla(${contrastHue(hue)}, 50%, 30%, 1)`
     };
   }
 

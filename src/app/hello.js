@@ -17,7 +17,9 @@ export class Hello extends Component {
         </p>
 
         <p className="lead">
-          <Link to="/create" className="btn btn-primary btn-lg">Get started</Link>
+          <Link to="/create" className="btn btn-primary btn-lg">
+            Get started
+          </Link>
         </p>
       </div>
     );

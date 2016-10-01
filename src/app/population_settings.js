@@ -6,7 +6,12 @@ const CENT = 100.0;
 
 function getDefaults() {
   return {
+
+    /* eslint-disable no-magic-numbers */
     bases: [1, 2, 3, 4],
+
+    /* eslint-enable no-magic-numbers */
+
     startingPopulation: 100,
     fitnessFunction: `return chromosome.reduce(
   function (accum, num) {
@@ -30,36 +35,23 @@ export class PopulationSettings extends Component {
     super(props);
     this.state = getDefaults();
 
-    this.handleStartingPopulation = ({target: {value}}) => {
-      this.setState({startingPopulation: parseInt(value, 10)});
-    };
-    this.handleFitnessFunction = ({target: {value}}) => {
+    this.handleInt = (key, {target: {value}}) =>
+      this.setState({key: parseInt(value, 10)});
+
+    this.handlePercent = (key, {target: {value}}) =>
+      this.setState({key: parseFloat(value) / CENT});
+
+    this.handleFitnessFunction = ({target: {value}}) =>
       this.setState({fitnessFunction: value});
-    };
-    this.handleChromosomeLength = ({target: {value}}) => {
-      this.setState({chromosomeLength: parseInt(value, 10)});
-    };
-    this.handleElitism = ({target: {checked}}) => {
+
+    this.handleElitism = ({target: {checked}}) =>
       this.setState({elitism: checked});
-    };
-    this.handleSelectionElitism = ({target: {value}}) => {
-      this.setState({selectionElitism: value / CENT});
-    };
-    this.handleTournamentSize = ({target: {value}}) => {
-      this.setState({tournamentSize: parseInt(value, 10)});
-    };
-    this.handleSelectFitnessProportionate = () => {
+
+    this.handleSelectFitnessProportionate = () =>
       this.setState({selectionMechanism: 'fitness-proportionate'});
-    };
-    this.handleSelectTournament = () => {
+
+    this.handleSelectTournament = () =>
       this.setState({selectionMechanism: 'tournament'});
-    };
-    this.handleMutationChance = ({target: {value}}) => {
-      this.setState({mutationChance: value / CENT});
-    };
-    this.handleCrossoverChance = ({target: {value}}) => {
-      this.setState({crossoverChance: value / CENT});
-    };
 
     this.handleCreate = () => {
       this.context.router.push({
@@ -95,7 +87,7 @@ export class PopulationSettings extends Component {
               className="form-control"
               min="1"
               value={startingPopulation}
-              onChange={this.handleStartingPopulation}
+              onChange={this.handleInt.bind(this, 'startingPopulation')}
               />
             <small className="form-text text-muted">How many organisms should be seeded into the first generation?</small>
           </div>
@@ -108,7 +100,7 @@ export class PopulationSettings extends Component {
               className="form-control"
               min="1" max="1000"
               value={chromosomeLength}
-              onChange={this.handleChromosomeLength}
+              onChange={this.handleInt.bind(this, 'chromosomeLength')}
               />
             <small className="form-text text-muted">How many bases should each chromosome have?</small>
           </div>
@@ -159,7 +151,7 @@ export class PopulationSettings extends Component {
                     min="1"
                     step="1"
                     value={tournamentSize}
-                    onChange={this.handleTournamentSize}
+                    onChange={this.handleInt.bind(this, 'tournamentSize')}
                     />
                   <small className="form-text text-muted">What number of chromosomes should be randomly chosen for each tournament?</small>
                 </div> : null
@@ -186,8 +178,8 @@ export class PopulationSettings extends Component {
                 disabled={!elitism}
                 min="1" max="100"
                 step="any"
-                value={selectionElitism * 100}
-                onChange={this.handleSelectionElitism}
+                value={selectionElitism * CENT}
+                onChange={this.handlePercent(this, 'selectionElitism')}
                 />
               <div className="input-group-addon">%</div>
             </div>
@@ -203,8 +195,8 @@ export class PopulationSettings extends Component {
                 className="form-control"
                 min="0" max="100"
                 step="any"
-                value={crossoverChance * 100}
-                onChange={this.handleCrossoverChance}
+                value={crossoverChance * CENT}
+                onChange={this.handlePercent(this, 'crossoverChance')}
                 />
               <div className="input-group-addon">%</div>
             </div>
@@ -220,8 +212,8 @@ export class PopulationSettings extends Component {
                 className="form-control"
                 min="0" max="100"
                 step="any"
-                value={mutationChance * 100}
-                onChange={this.handleMutationChance}
+                value={mutationChance * CENT}
+                onChange={this.handlePercent(this, 'mutationChance')}
                 />
               <div className="input-group-addon">%</div>
             </div>

@@ -4,6 +4,13 @@ import {findBaseColors} from './chromosome_abstract';
 
 
 export class ChromosomesLegend extends Component {
+  static propTypes = {
+    ga: React.PropTypes.object.isRequired,
+    generation: React.PropTypes.number.isRequired,
+    page: React.PropTypes.number.isRequired,
+    pageSize: React.PropTypes.number.isRequired,
+  }
+
   render() {
     const {ga, generation, page, pageSize} = this.props;
     const baseColors = findBaseColors(ga.getBases());
@@ -14,7 +21,7 @@ export class ChromosomesLegend extends Component {
     const totalChromosomes = ga.count();
 
     function getSampleStyle(base) {
-      const {color, inverse} = baseColors.get(base);
+      const {hue, inverse} = baseColors.get(base);
 
       return {
         display: 'inline-block',
@@ -22,7 +29,7 @@ export class ChromosomesLegend extends Component {
         margin: '0.5em',
         textAlign: 'center',
         fontWeight: 'bold',
-        backgroundColor: `hsla(${color}, 50%, 80%, 1)`,
+        backgroundColor: `hsla(${hue}, 50%, 80%, 1)`,
         color: `hsla(${inverse}, 50%, 30%, 1)`,
       };
     }
@@ -31,10 +38,14 @@ export class ChromosomesLegend extends Component {
       <div className="card">
         <dl className="card-block">
           <dt>Generation</dt>
-          <dd><strong>{generations - generation}</strong> of <strong>{generations}</strong></dd>
+          <dd>
+            <strong>{generations - generation}</strong> of <strong>{generations}</strong>
+          </dd>
 
           <dt>Chromosomes</dt>
-          <dd>Viewing <strong>{chromosomes.length}</strong> of <strong>{totalChromosomes}</strong> chromosomes in this generation.</dd>
+          <dd>
+            Viewing <strong>{chromosomes.length}</strong> of <strong>{totalChromosomes}</strong> chromosomes in this generation.
+          </dd>
 
           <dt>Chromosome bases</dt>
           <dd>

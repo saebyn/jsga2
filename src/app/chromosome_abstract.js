@@ -1,21 +1,34 @@
 import React, {Component} from 'react';
 
+export const HUE_RANGE = 360.0;
+export const HALF_HUE_RANGE = 180.0;
+
+
+export function contrastHue(hue) {
+  return (hue + HALF_HUE_RANGE) % HUE_RANGE;
+}
+
 
 export function findBaseColors(bases) {
   return new Map(
     bases.map(
-      (base, index) => [base, 360.0 / bases.length * index]
+      (base, index) => [base, HUE_RANGE / bases.length * index]
     ).map(
-      ([base, color]) =>
-        [base, {color, inverse: (color + 180) % 360}]
+      ([base, hue]) =>
+        [base, {hue, inverse: contrastHue(hue)}]
     )
   );
 }
 
 
 export class ChromosomeAbstract extends Component {
+  static propTypes = {
+    baseColors: React.PropTypes.instanceOf(Map).isRequired,
+    chromosome: React.PropTypes.array.isRequired,
+  }
+
   getBaseColor(thisBase) {
-    const hue = this.props.baseColors.get(thisBase).color;
+    const hue = this.props.baseColors.get(thisBase).hue;
 
     return `hsla(${hue}, 50%, 80%, 1)`;
   }

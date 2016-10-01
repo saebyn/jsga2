@@ -3,6 +3,10 @@ import {Link} from 'react-router';
 
 
 export class App extends Component {
+  static propTypes = {
+    children: React.PropTypes.element.isRequired
+  }
+
   render() {
     const {children} = this.props;
 

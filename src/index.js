@@ -1,13 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {Router, Route, IndexRoute, hashHistory} from 'react-router';
+import './index.scss';
 
+import {IndexRoute, Route, Router, hashHistory} from 'react-router';
 import {App} from './app/app';
 import {Hello} from './app/hello';
 import {Population} from './app/population';
 import {PopulationSettings} from './app/population_settings';
 
-import './index.scss';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 
 ReactDOM.render(
   <Router history={hashHistory}>

@@ -1,9 +1,16 @@
-import React, {Component} from 'react';
-
 import {ChromosomeAbstract, findBaseColors} from './chromosome_abstract';
+
+import React, {Component} from 'react';
 
 
 export class ChromosomesChart extends Component {
+  static propTypes = {
+    ga: React.PropTypes.object.isRequired,
+    generation: React.PropTypes.number.isRequired,
+    page: React.PropTypes.number.isRequired,
+    pageSize: React.PropTypes.number.isRequired,
+  }
+
   render() {
     const {ga, generation, page, pageSize} = this.props;
     const baseColors = findBaseColors(ga.getBases());
