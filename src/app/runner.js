@@ -44,6 +44,10 @@ export class Runner extends Component {
     };
   }
 
+  static propTypes = {
+      onStep: React.PropTypes.func,
+  }
+
   render() {
     let {steps, timeoutId} = this.state;
 

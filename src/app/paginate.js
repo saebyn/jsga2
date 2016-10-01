@@ -2,6 +2,12 @@ import React, {Component} from 'react';
 
 
 export class Paginate extends Component {
+  static propTypes = {
+      onGotoPage: React.PropTypes.func,
+      pages: React.PropTypes.number,
+      currentPage: React.PropTypes.number,
+  }
+
   handleGotoPage(page) {
     this.props.onGotoPage(page);
   }

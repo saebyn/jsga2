@@ -1,10 +1,25 @@
 import React, {Component} from 'react';
 
-import {ChromosomesLegend} from './chromosomes_legend';
 import {ChromosomesChart} from './chromosomes_chart';
+import {ChromosomesLegend} from './chromosomes_legend';
 import {GA} from './ga';
 import {Paginate} from './paginate';
 import {Runner} from './runner';
+
+
+function jsonPropType(props, propName, componentName) {
+    try {
+        JSON.parse(props[propName]);
+    } catch (exp) {
+        return new Error(
+            `Invalid prop \`${propName}\` supplied to \`${componentName}\`.
+Validation failed.`
+        );
+    }
+
+    return null;
+}
+
 
 export class Population extends Component {
   constructor(props) {
@@ -27,6 +42,14 @@ export class Population extends Component {
     this.handleGotoPage = (page) => {
       this.setState({page});
     };
+  }
+
+  static propTypes = {
+      location: React.PropTypes.shape({
+          query: React.PropTypes.shape({
+              settings: jsonPropType,
+          }),
+      }),
   }
 
   render() {
