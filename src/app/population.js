@@ -34,12 +34,14 @@ export class Population extends Component {
       pageSize: 36,
     };
 
-    this.handleStep = () => {
+    this.handleStep = () =>
       this.setState({ga: this.state.ga.step()});
-    };
 
-    this.handleGotoPage = (page) => {
+    this.handleGotoPage = (page) =>
       this.setState({page});
+
+    this.handleGenerationSwitch = (generation) => {
+      this.setState({generation});
     };
   }
 
@@ -90,6 +92,7 @@ export class Population extends Component {
             generation={generation}
             page={page}
             pageSize={pageSize}
+            onSwitchGeneration={this.handleGenerationSwitch}
             ga={ga}
             />
         </div>
