@@ -2,6 +2,23 @@
 import React, {Component} from 'react';
 
 const CENT = 100.0;
+const PERCENT_PRECISION = 2;
+
+
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+function round(number, precision) {
+  const base = 10;
+  const factor = Math.pow(base, precision);
+  const tempNumber = number * factor;
+  const roundedTempNumber = Math.round(tempNumber);
+
+  return roundedTempNumber / factor;
+}
+
+
+function formatPercent(number) {
+  return `${round(number * CENT, PERCENT_PRECISION)}%`;
+}
 
 
 function getDefaults() {
@@ -36,10 +53,11 @@ export class PopulationSettings extends Component {
     this.state = getDefaults();
 
     this.handleInt = (key, {target: {value}}) =>
-      this.setState({key: parseInt(value, 10)});
+      this.setState({[key]: parseInt(value, 10)});
 
-    this.handlePercent = (key, {target: {value}}) =>
-      this.setState({key: parseFloat(value) / CENT});
+    this.handlePercent = (key, {target: {value}}) => {
+      this.setState({[key]: round(parseFloat(value), PERCENT_PRECISION) / CENT});
+    };
 
     this.handleFitnessFunction = ({target: {value}}) =>
       this.setState({fitnessFunctionSource: value});
@@ -183,41 +201,35 @@ export class PopulationSettings extends Component {
                 />
               <div className="input-group-addon">%</div>
             </div>
-            <small className="form-text text-muted">What percentage of the most fit chromosomes in each generation should be directly cloned into the next generation?</small>
+            <small className="form-text text-muted">The percentage of the most fit chromosomes in each generation should be directly cloned into the next generation is {formatPercent(selectionElitism)}</small>
           </div>
           <div className="form-group">
             <label>
               Crossover chance
             </label>
-            <div className="input-group">
-              <input
-                type="number"
-                className="form-control"
-                min="0" max="100"
-                step="any"
-                value={crossoverChance * CENT}
-                onChange={this.handlePercent.bind(this, 'crossoverChance')}
-                />
-              <div className="input-group-addon">%</div>
-            </div>
-            <small className="form-text text-muted">For each pair of chromosomes selected to reproduce, what is the probability that a crossover will occur?</small>
+            <input
+              type="range"
+              className="form-control"
+              min="0" max="100"
+              step="0.1"
+              value={crossoverChance * CENT}
+              onChange={this.handlePercent.bind(this, 'crossoverChance')}
+              />
+            <small className="form-text text-muted">For each pair of chromosomes selected to reproduce, the probability that a crossover will occur is {formatPercent(crossoverChance)}</small>
           </div>
           <div className="form-group">
             <label>
               Mutation chance
             </label>
-            <div className="input-group">
-              <input
-                type="number"
-                className="form-control"
-                min="0" max="100"
-                step="any"
-                value={mutationChance * CENT}
-                onChange={this.handlePercent.bind(this, 'mutationChance')}
-                />
-              <div className="input-group-addon">%</div>
-            </div>
-            <small className="form-text text-muted">For each base in a new chromosome, what is the probability that a mutation to a different base will occur?</small>
+            <input
+              type="range"
+              className="form-control"
+              min="0" max="100"
+              step="0.1"
+              value={mutationChance * CENT}
+              onChange={this.handlePercent.bind(this, 'mutationChance')}
+              />
+            <small className="form-text text-muted">For each base in a new chromosome, the probability that a mutation to a different base will occur is {formatPercent(mutationChance)}</small>
           </div>
 
           <div className="form-group row">
