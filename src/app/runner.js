@@ -48,6 +48,12 @@ export class Runner extends Component {
       onStep: React.PropTypes.func,
   }
 
+  componentWillUnmount() {
+    if (this.state.timeoutId !== null) {
+      clearTimeout(this.state.timeoutId);
+    }
+  }
+
   render() {
     let {steps, timeoutId} = this.state;
 
