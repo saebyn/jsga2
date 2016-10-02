@@ -80,7 +80,7 @@ export class Population extends Component {
   render() {
     const {ga, generation, page, pageSize} = this.state;
 
-    const chromosomesCount = ga ? ga.count() : 0;
+    const organismsCount = ga ? ga.count() : 0;
 
     return (
       <div>
@@ -108,7 +108,7 @@ export class Population extends Component {
           <Paginate
             onGotoPage={this.handleGotoPage}
             currentPage={page}
-            pages={Math.ceil(chromosomesCount / pageSize)}
+            pages={Math.ceil(organismsCount / pageSize)}
             />
         </div>
       </div>

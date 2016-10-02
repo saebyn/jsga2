@@ -16,7 +16,7 @@ export class ChromosomesChart extends Component {
     const baseColors = findBaseColors(ga.getBases());
     const viewStart = page * pageSize;
     const viewEnd = (page + 1) * pageSize;
-    const chromosomes = ga.view(viewStart, viewEnd, generation);
+    const organisms = ga.view(viewStart, viewEnd, generation);
     const style = {
       width: '10%',
       display: 'inline-block',
@@ -25,10 +25,10 @@ export class ChromosomesChart extends Component {
 
     return (
       <div>
-        {chromosomes.map(
-          (chromosome, index) =>
+        {organisms.map(
+          (organism, index) =>
             <div key={index} style={style}>
-              <ChromosomeAbstract baseColors={baseColors} chromosome={chromosome} />
+              <ChromosomeAbstract baseColors={baseColors} chromosome={organism.chromosome} />
             </div>
         )}
       </div>
