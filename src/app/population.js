@@ -29,7 +29,6 @@ export class Population extends Component {
 
     this.state = {
       ga: GA.fromSettings(settings),
-      settings,
       generation: 0,
       page: 0,
       pageSize: 36,
@@ -50,6 +49,30 @@ export class Population extends Component {
               settings: jsonPropType,
           }),
       }),
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+      if (nextProps.location.query.settings !== this.props.location.query.settings) {
+          return true;
+      }
+
+      if (nextState.ga !== this.state.ga) {
+          return true;
+      }
+
+      if (nextState.generation !== this.state.generation) {
+          return true;
+      }
+
+      if (nextState.page !== this.state.page) {
+          return true;
+      }
+
+      if (nextState.pageSize !== this.state.pageSize) {
+          return true;
+      }
+
+      return false;
   }
 
   render() {

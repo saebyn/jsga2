@@ -33,6 +33,18 @@ export class ChromosomeAbstract extends Component {
     return `hsla(${hue}, 50%, 80%, 1)`;
   }
 
+  shouldComponentUpdate(nextProps) {
+      if (nextProps.baseColors !== this.props.baseColors) {
+          return true;
+      }
+
+      if (nextProps.chromosome !== this.props.chromosome) {
+          return true;
+      }
+
+      return false;
+  }
+
   render() {
     const chromosome = this.props.chromosome;
     const sideLength = Math.ceil(Math.sqrt(chromosome.length));
