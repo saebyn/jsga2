@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 
-import {findBaseColors} from './chromosome_abstract';
-
 
 export class ChromosomesLegend extends Component {
   static propTypes = {
-    ga: React.PropTypes.object.isRequired,
+    baseColors: React.PropTypes.instanceOf(Map).isRequired,
+    bases: React.PropTypes.array.isRequired,
+    log: React.PropTypes.object.isRequired,
     generation: React.PropTypes.number.isRequired,
     page: React.PropTypes.number.isRequired,
     pageSize: React.PropTypes.number.isRequired,
@@ -20,13 +20,10 @@ export class ChromosomesLegend extends Component {
   }
 
   render() {
-    const {ga, generation, page, pageSize} = this.props;
-    const baseColors = findBaseColors(ga.getBases());
-    const viewStart = page * pageSize;
-    const viewEnd = (page + 1) * pageSize;
-    const chromosomes = ga.view(viewStart, viewEnd, generation);
-    const generations = ga.countGenerations();
-    const totalChromosomes = ga.count();
+    const {baseColors, bases, generation, log, page, pageSize} = this.props;
+    const chromosomes = log.view({page, pageSize, generation});
+    const generations = log.length;
+    const totalChromosomes = log.view({generation}).length;
 
     function getSampleStyle(base) {
       const {hue, inverse} = baseColors.get(base);
@@ -65,7 +62,7 @@ export class ChromosomesLegend extends Component {
           <dt>Chromosome bases</dt>
           <dd>
             <ul>
-              {ga.getBases().map(
+              {bases.map(
                 (base, index) =>
                   <li key={index} style={getSampleStyle(base)}>{base}</li>
               )}

@@ -1,6 +1,7 @@
-import {breed, generatePool, mutateChromosome} from './ga/reproduction';
+import {breed, mutateChromosome} from './ga/reproduction';
 import {selectByProportionateFitness, selectByTournament} from './ga/selection';
 import {elementGenerator} from './ga/utils';
+import {generatePool} from './ga/generator';
 
 
 /* eslint-disable no-new-func */
@@ -11,25 +12,44 @@ function buildFitnessFunction(fitnessFunctionSource) {
 /* eslint-enable no-new-func */
 
 export class GA {
-  static fromSettings(settings) {
-    let preparedSettings = Object.assign({}, settings);
+  constructor(settings) {
+    this.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
 
-    preparedSettings.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
+    this.bases = settings.bases;
+    this.chromosomeLength = settings.chromosomeLength;
+    this.startingPopulation = settings.startingPopulation;
+    this.elitism = settings.elitism ? settings.selectionElitism : 0;
+    this.tournamentSize = settings.tournamentSize;
+    this.bases = settings.bases;
+    this.selectionMechanism = settings.selectionMechanism;
+    this.crossoverChance = settings.crossoverChance;
+    this.mutationChance = settings.mutationChance;
 
-    function chromosomeGenerator() {
-      return elementGenerator(settings.bases, settings.chromosomeLength);
+    this.population = this.spawn();
+  }
+
+  spawn() {
+    const chromosomeGenerator = () =>
+      elementGenerator(this.bases, this.chromosomeLength);
+
+    let organisms = [];
+
+    for (let organism of generatePool(chromosomeGenerator, this.fitnessFn)) {
+      if (organisms.length < this.startingPopulation) {
+        organisms.push(organism);
+      } else {
+        break;
+      }
     }
-
-    let organisms = generatePool(settings.startingPopulation, chromosomeGenerator, preparedSettings.fitnessFn);
 
     // sort organisms by descending fitness.
     organisms.sort((oa, ob) => ob.fitness - oa.fitness);
 
-    return new GA(preparedSettings, {organisms}, []);
+    return {organisms};
   }
 
-  step() {
-    const {organisms} = this.population;
+  step(population) {
+    const {organisms} = population;
 
     // choose elite
     let pool = organisms.slice(0, Math.ceil(this.elitism * organisms.length));
@@ -62,56 +82,18 @@ export class GA {
     // sort organisms by descending fitness.
     pool.sort((oa, ob) => ob.fitness - oa.fitness);
 
-    return new GA(
-      {
-        elitism: this.elitism,
-        tournamentSize: this.tournamentSize,
-        fitnessFn: this.fitnessFn,
-        bases: this.bases,
-        selectionMechanism: this.selectionMechanism,
-        crossoverChance: this.crossoverChance,
-        mutationChance: this.mutationChance
-      },
-      {organisms: pool},
-      [this.population].concat(this.previousGenerations)
-    );
+    return {organisms: pool};
   }
 
   count() {
     return this.population.organisms.length;
   }
 
-  countGenerations() {
-    return this.previousGenerations.length + 1;
-  }
-
   getBases() {
     return this.bases;
   }
 
-  view(start, end, generation = 0) {
-    const {organisms} = [this.population].concat(this.previousGenerations)[generation];
-
-    return organisms.slice(start, end);
-  }
-
   // Internal methods
-  constructor(settings, population, previousGenerations) {
-    this.fitnessFn = settings.fitnessFn;
-
-    this.population = population;
-
-    this.elitism = settings.elitism ? settings.selectionElitism : 0;
-    this.tournamentSize = settings.tournamentSize;
-    this.bases = settings.bases;
-    this.selectionMechanism = settings.selectionMechanism;
-    this.crossoverChance = settings.crossoverChance;
-    this.mutationChance = settings.mutationChance;
-
-    this.generation = previousGenerations.length;
-    this.previousGenerations = previousGenerations;
-  }
-
   select() {
     const {organisms} = this.population;
 

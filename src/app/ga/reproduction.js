@@ -1,18 +1,6 @@
 import {randomElement, randomInt} from './utils';
 
 
-export function generatePool(size, chromosomeGenerator, fitnessFn) {
-  let organisms = [];
-
-  for (let ii = 0; ii < size; ii++) {
-    const chromosome = [...chromosomeGenerator()];
-
-    organisms.push({chromosome, fitness: fitnessFn(chromosome)});
-  }
-
-  return organisms;
-}
-
 /*
  * Mutate this chromosome at random.
  *

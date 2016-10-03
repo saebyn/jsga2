@@ -4,7 +4,9 @@ import {ChromosomesChart} from './chromosomes_chart';
 import {ChromosomesLegend} from './chromosomes_legend';
 import {GA} from './ga';
 import {Paginate} from './paginate';
+import {PopulationLog} from './population_log';
 import {Runner} from './runner';
+import {findBaseColors} from './chromosome_abstract';
 
 
 function jsonPropType(props, propName, componentName) {
@@ -28,14 +30,23 @@ export class Population extends Component {
     const settings = JSON.parse(props.location.query.settings);
 
     this.state = {
-      ga: GA.fromSettings(settings),
+      ga: new GA(settings),
       generation: 0,
       page: 0,
       pageSize: 36,
     };
 
-    this.handleStep = () =>
-      this.setState({ga: this.state.ga.step()});
+    // separated out just so I don't have to have create ga first,
+    // and give it a name that isn't shadowed by handleStep below.
+    this.state.log = new PopulationLog(this.state.ga.spawn());
+
+    this.handleStep = () => {
+      const {log, ga} = this.state;
+
+      this.setState({
+        log: log.append(ga.step(log.last())),
+      });
+    };
 
     this.handleGotoPage = (page) =>
       this.setState({page});
@@ -62,6 +73,10 @@ export class Population extends Component {
           return true;
       }
 
+      if (nextState.log !== this.state.log) {
+          return true;
+      }
+
       if (nextState.generation !== this.state.generation) {
           return true;
       }
@@ -78,30 +93,34 @@ export class Population extends Component {
   }
 
   render() {
-    const {ga, generation, page, pageSize} = this.state;
-
-    const organismsCount = ga ? ga.count() : 0;
+    const {log, ga, generation, page, pageSize} = this.state;
+    const bases = ga.getBases();
+    const baseColors = findBaseColors(bases);
+    const organismsCount = log.view({generation}).length;
 
     return (
       <div>
         <div className="row">
-          <Runner onStep={this.handleStep} ga={ga} />
+          <Runner onStep={this.handleStep} />
         </div>
         <div className="row">
           <ChromosomesLegend
             generation={generation}
+            log={log}
             page={page}
             pageSize={pageSize}
             onSwitchGeneration={this.handleGenerationSwitch}
-            ga={ga}
+            baseColors={baseColors}
+            bases={bases}
             />
         </div>
         <div className="row">
           <ChromosomesChart
             generation={generation}
+            log={log}
             page={page}
             pageSize={pageSize}
-            ga={ga}
+            baseColors={baseColors}
             />
         </div>
         <div className="row pagination-container">
