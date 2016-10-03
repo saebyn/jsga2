@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-
 import {ChromosomesChart} from './chromosomes_chart';
 import {ChromosomesLegend} from './chromosomes_legend';
 import {GA} from './ga';
+import {LineChart} from './charts/line';
 import {Paginate} from './paginate';
 import {PopulationLog} from './population_log';
 import {Runner} from './runner';
@@ -20,6 +20,13 @@ Validation failed.`
     }
 
     return null;
+}
+
+function lineStyle(label, data) {
+  return {
+    label,
+    data,
+  };
 }
 
 
@@ -98,21 +105,36 @@ export class Population extends Component {
     const baseColors = findBaseColors(bases);
     const organismsCount = log.view({generation}).length;
 
+    const chartData = {
+      labels: [...Array(log.length).keys()].map((gen) => `${gen}`),
+      datasets: [
+        lineStyle('Median', log.getFitnessStats('median')),
+        lineStyle('Mean', log.getFitnessStats('mean')),
+        lineStyle('Max', log.getFitnessStats('max')),
+        lineStyle('Min', log.getFitnessStats('min')),
+      ],
+    };
+
     return (
       <div>
         <div className="row">
           <Runner onStep={this.handleStep} />
         </div>
         <div className="row">
-          <ChromosomesLegend
-            generation={generation}
-            log={log}
-            page={page}
-            pageSize={pageSize}
-            onSwitchGeneration={this.handleGenerationSwitch}
-            baseColors={baseColors}
-            bases={bases}
-            />
+          <div className="col-xs-6">
+            <ChromosomesLegend
+              generation={generation}
+              log={log}
+              page={page}
+              pageSize={pageSize}
+              onSwitchGeneration={this.handleGenerationSwitch}
+              baseColors={baseColors}
+              bases={bases}
+              />
+          </div>
+          <div className="col-xs-6">
+            <LineChart data={chartData}/>
+          </div>
         </div>
         <div className="row">
           <ChromosomesChart
