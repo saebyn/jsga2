@@ -16,7 +16,8 @@ export class ChromosomesChart extends Component {
     const {baseColors, log, generation, page, pageSize} = this.props;
     const organisms = log.view({page, pageSize, generation});
     const style = {
-      width: '10%',
+      width: '15%',
+      minWidth: '5em',
       display: 'inline-block',
       margin: '5px',
     };

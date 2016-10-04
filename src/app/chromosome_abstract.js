@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Canvas from 'react-canvas-component';
 
 export const HUE_RANGE = 360.0;
 export const HALF_HUE_RANGE = 180.0;
@@ -27,6 +28,36 @@ export class ChromosomeAbstract extends Component {
     chromosome: React.PropTypes.array.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.drawCanvas = this.drawCanvas.bind(this);
+  }
+
+  drawCanvas({ctx}) {
+    const {width, height} = ctx.canvas;
+    const chromosome = this.props.chromosome;
+    const sideLength = Math.ceil(Math.sqrt(chromosome.length));
+    const cellSize = Math.min(width, height) / sideLength;
+
+    ctx.save();
+    ctx.clearRect(0, 0, width, height);
+
+    for (let baseIndex = 0; baseIndex < chromosome.length; baseIndex++) {
+      const base = chromosome[baseIndex];
+
+      ctx.fillStyle = this.getBaseColor(base);
+      ctx.fillRect(
+        baseIndex % sideLength * cellSize,
+        Math.floor(baseIndex / sideLength) * cellSize,
+        sideLength,
+        sideLength
+      );
+    }
+
+    ctx.restore();
+  }
+
+
   getBaseColor(thisBase) {
     const hue = this.props.baseColors.get(thisBase).hue;
 
@@ -46,24 +77,17 @@ export class ChromosomeAbstract extends Component {
   }
 
   render() {
-    const chromosome = this.props.chromosome;
-    const sideLength = Math.ceil(Math.sqrt(chromosome.length));
-    const viewBox = [0, 0, sideLength, sideLength].join(' ');
+    const style = {
+      width: '100%',
+      height: '100%',
+    };
 
     return (
-      <svg viewBox={viewBox}>
-        {chromosome.map(
-          (base, index) =>
-            <rect
-              key={index}
-              fill={this.getBaseColor(base)}
-              width="1"
-              height="1"
-              x={index % sideLength}
-              y={Math.floor(index / sideLength)}
-              />
-        )}
-      </svg>
+      <Canvas
+        draw={this.drawCanvas}
+        realtime={true}
+        style={style}
+      />
     );
   }
 }
