@@ -43,7 +43,7 @@ export function selectByTournament(size, organisms) {
  * This may select the same organism twice.
  */
 export function selectByProportionateFitness(organisms) {
-  const totalFitness = organisms.reduce((fa, fb) => fa.fitness + fb.fitness, 0);
+  const totalFitness = organisms.reduce((fa, fb) => fa + fb.fitness, 0);
   let selections = [];
   const SELECTIONS_WANTED = 2;
 
