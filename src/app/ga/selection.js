@@ -66,7 +66,7 @@ export function selectByProportionateFitness(organisms) {
         // search for the next random selection
         break;
       } else {
-        accumulatedFitness += organisms.fitness;
+        accumulatedFitness += organism.fitness;
       }
     }
   }
