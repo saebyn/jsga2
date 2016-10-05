@@ -1,15 +1,14 @@
-import {randomInt} from './utils';
 
 
-function tournamentChooseOne(size, organisms) {
-  // assert organisms.length > 0
+function tournamentChooseOne(rng, size, organisms) {
+  console.assert(organisms.length > 0, organisms);
 
   // Choose a single chromosome by holding a tournament between `size` random
   // participant organisms in the `organisms`, and selecting the fittest.
   let selections = Array(size)
     // gotcha, map won't work on an array of undefined's
     .fill(0)
-    .map(() => randomInt(0, organisms.length))
+    .map(() => rng.intBetween(0, organisms.length - 1))
     .map(position => organisms[position]);
 
   // Find the organism with the largest fitness
@@ -29,10 +28,10 @@ function tournamentChooseOne(size, organisms) {
  *
  * Returns a list of two Organism instances.
  */
-export function selectByTournament(size, organisms) {
+export function selectByTournament(rng, size, organisms) {
   return [
-    tournamentChooseOne(size, organisms),
-    tournamentChooseOne(size, organisms)
+    tournamentChooseOne(rng, size, organisms),
+    tournamentChooseOne(rng, size, organisms)
   ];
 }
 
@@ -42,8 +41,8 @@ export function selectByTournament(size, organisms) {
  *
  * This may select the same organism twice.
  */
-export function selectByProportionateFitness(organisms) {
-  const totalFitness = organisms.reduce((fa, fb) => fa + fb.fitness, 0);
+export function selectByProportionateFitness(rng, organisms) {
+  const totalFitness = organisms.reduce((acc, fb) => acc + fb.fitness, 0);
   let selections = [];
   const SELECTIONS_WANTED = 2;
 
@@ -70,6 +69,8 @@ export function selectByProportionateFitness(organisms) {
       }
     }
   }
+
+  console.assert(selections.length === SELECTIONS_WANTED, selections);
 
   return selections;
 }

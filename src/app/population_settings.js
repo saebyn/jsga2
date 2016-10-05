@@ -29,6 +29,7 @@ function getDefaults() {
 
     /* eslint-enable no-magic-numbers */
 
+    seed: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
     startingPopulation: 100,
     fitnessFunctionSource: `return chromosome.reduce(
   function (accum, num) {
@@ -71,6 +72,9 @@ export class PopulationSettings extends Component {
     this.handleSelectTournament = () =>
       this.setState({selectionMechanism: 'tournament'});
 
+    this.handleSeed = ({target: {value}}) =>
+      this.setState({seed: value});
+
     this.handleCreate = () => {
       this.context.router.push({
         pathname: '/simulation',
@@ -91,7 +95,7 @@ export class PopulationSettings extends Component {
   }
 
   render() {
-    let {startingPopulation, fitnessFunctionSource, chromosomeLength, selectionMechanism, tournamentSize, elitism, selectionElitism, crossoverChance, mutationChance} = this.state;
+    let {startingPopulation, fitnessFunctionSource, chromosomeLength, selectionMechanism, tournamentSize, elitism, selectionElitism, crossoverChance, mutationChance, seed} = this.state;
 
     return (
       <div>
@@ -108,6 +112,18 @@ export class PopulationSettings extends Component {
               onChange={this.handleInt.bind(this, 'startingPopulation')}
               />
             <small className="form-text text-muted">How many organisms should be seeded into the first generation?</small>
+          </div>
+          <div className="form-group">
+            <label>
+              Random seed
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={seed}
+              onChange={this.handleSeed}
+              />
+            <small className="form-text text-muted">This is the seed value for the pseudo-random number generator.</small>
           </div>
           <div className="form-group">
             <label>

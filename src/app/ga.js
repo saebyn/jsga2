@@ -1,5 +1,6 @@
 import {breed, mutateChromosome} from './ga/reproduction';
 import {selectByProportionateFitness, selectByTournament} from './ga/selection';
+import Random from 'random-seed';
 import {elementGenerator} from './ga/utils';
 import {generatePool} from './ga/generator';
 
@@ -15,6 +16,7 @@ export class GA {
   constructor(settings) {
     this.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
 
+    this.rng = Random.create(settings.seed);
     this.bases = settings.bases;
     this.chromosomeLength = settings.chromosomeLength;
     this.startingPopulation = settings.startingPopulation;
@@ -30,7 +32,7 @@ export class GA {
 
   spawn() {
     const chromosomeGenerator = () =>
-      elementGenerator(this.bases, this.chromosomeLength);
+      elementGenerator(this.rng, this.bases, this.chromosomeLength);
 
     let organisms = [];
 
@@ -55,12 +57,13 @@ export class GA {
     let pool = organisms.slice(0, Math.ceil(this.elitism * organisms.length));
 
     const mutator = (chromosome) =>
-      mutateChromosome(this.bases, this.mutationChance, chromosome);
+      mutateChromosome(this.rng, this.bases, this.mutationChance, chromosome);
 
     // pick remaining in pairs, until we have as many as the existing population
     // breeding each pair
     while (pool.length < organisms.length) {
       const selectedChromosomes = this.select(
+        this.rng,
         this.selectionMechanism,
         this.tournamentSize,
         organisms
@@ -69,6 +72,7 @@ export class GA {
       );
 
       const bredOrganisms = breed(
+        this.rng,
         mutator, this.crossoverChance,
         selectedChromosomes
       ).map(
@@ -98,9 +102,9 @@ export class GA {
     const {organisms} = this.population;
 
     if (this.selectionMechanism === 'tournament') {
-      return selectByTournament(this.tournamentSize, organisms);
+      return selectByTournament(this.rng, this.tournamentSize, organisms);
     } else if (this.selectionMechanism === 'fitness-proportionate') {
-      return selectByProportionateFitness(organisms);
+      return selectByProportionateFitness(this.rng, organisms);
     }
 
     throw new Error(`Unknown selection mechanism ${this.selectionMechanism}.`);

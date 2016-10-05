@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "random-seed": "^0.3.0",
     "react": "^15.0.1",
     "react-canvas-component": "github:saebyn/react-canvas-component#master",
     "react-dom": "^15.0.1",

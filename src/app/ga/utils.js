@@ -1,17 +1,12 @@
 
-export function randomInt(min, max) {
-  // [min, max)
-  const range = max - min;
+export function randomElement(rng, bases) {
+  console.assert(bases.length > 0, bases);
 
-  return Math.floor(Math.random() * range + min);
+  return bases[rng.intBetween(0, bases.length - 1)];
 }
 
-export function randomElement(bases) {
-  return bases[randomInt(0, bases.length)];
-}
-
-export function *elementGenerator(bases, length) {
+export function *elementGenerator(rng, bases, length) {
   for (let ii = 0; ii < length; ii++) {
-    yield randomElement(bases);
+    yield randomElement(rng, bases);
   }
 }

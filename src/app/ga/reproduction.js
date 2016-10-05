@@ -1,4 +1,4 @@
-import {randomElement, randomInt} from './utils';
+import {randomElement} from './utils';
 
 
 /*
@@ -19,12 +19,12 @@ import {randomElement, randomInt} from './utils';
  *
  * Maybe this isn't what we want? This is what the original implementation did though.
  */
-export function mutateChromosome(bases, chance, chromosome) {
+export function mutateChromosome(rng, bases, chance, chromosome) {
   let newChromosome = chromosome.slice();
 
   for (let locusIndex = 0; locusIndex < chromosome.length; locusIndex++) {
     if (Math.random() < chance) {
-      newChromosome[locusIndex] = randomElement(bases);
+      newChromosome[locusIndex] = randomElement(rng, bases);
     }
   }
 
@@ -48,13 +48,13 @@ export function mutateChromosome(bases, chance, chromosome) {
  * first chromosome.
  *
  */
-function crossoverChromosomes(chance, chromosomeA, chromosomeB) {
+function crossoverChromosomes(rng, chance, chromosomeA, chromosomeB) {
   if (Math.random() < chance) {
     // Get the length of the shorter of the two chromosomes to be
     // crossed-over.
     const chromosomeLength = Math.min(chromosomeA.length, chromosomeB.length);
     // Pick a position (locus) for the crossover
-    const locus = randomInt(0, chromosomeLength);
+    const locus = rng.intBetween(0, chromosomeLength - 1);
     // Construct the two child chromosomes
     const childOneChromosome = chromosomeA
       .slice(0, locus)
@@ -78,7 +78,7 @@ function crossoverChromosomes(chance, chromosomeA, chromosomeB) {
  * and then 7 and 1 are not). Chromosomes are not
  * crossed over with themselves.
  */
-export function breed(mutator, crossoverChance, population) {
+export function breed(rng, mutator, crossoverChance, population) {
   let newChromosomes = [];
 
   /*
@@ -95,6 +95,7 @@ export function breed(mutator, crossoverChance, population) {
       if (ii !== jj) {
         newChromosomes = newChromosomes.concat(
           crossoverChromosomes(
+            rng,
             crossoverChance,
             population[ii], population[jj]
           )
