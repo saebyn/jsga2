@@ -23,7 +23,7 @@ export function mutateChromosome(rng, bases, chance, chromosome) {
   let newChromosome = chromosome.slice();
 
   for (let locusIndex = 0; locusIndex < chromosome.length; locusIndex++) {
-    if (Math.random() < chance) {
+    if (rng.random() < chance) {
       newChromosome[locusIndex] = randomElement(rng, bases);
     }
   }

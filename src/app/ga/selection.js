@@ -51,7 +51,7 @@ export function selectByProportionateFitness(rng, organisms) {
   while (selections.length < SELECTIONS_WANTED) {
     // Choose a random value in the range from 0 to the sum of all
     // of the fitness values of the organisms.
-    const randomValue = Math.floor(Math.random() * totalFitness);
+    const randomValue = rng.range(0, totalFitness);
     let accumulatedFitness = 0.0;
 
     // Iterate through all organisms,
