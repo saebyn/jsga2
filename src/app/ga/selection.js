@@ -35,6 +35,37 @@ export function selectByTournament(rng, size, organisms) {
   ];
 }
 
+
+function selectOneByProportionateFitness(targetValue, organisms) {
+  let accumulatedFitness = 0.0;
+
+  /*
+  console.assert(targetValue >= 0);
+  console.assert(organisms.length > 0);
+  */
+
+  let selected = organisms[0];
+
+  // Iterate through all organisms,
+  // accumulating their fitness, until a selection is made.
+  for (let organism of organisms) {
+    // If the random value is in the proportional subrange
+    // of fitness of this chromosome
+    console.assert(targetValue >= accumulatedFitness);
+    if (targetValue < accumulatedFitness + organism.fitness) {
+      // select it
+      selected = organism;
+      // search for the next random selection
+      break;
+    } else {
+      accumulatedFitness += organism.fitness;
+    }
+  }
+
+  return selected;
+}
+
+
 /*
  * Choose a pair of organisms randomly, but where each organism has
  * a likelyhood of being selected proportional to its fitness.
@@ -43,34 +74,12 @@ export function selectByTournament(rng, size, organisms) {
  */
 export function selectByProportionateFitness(rng, organisms) {
   const totalFitness = organisms.reduce((acc, fb) => acc + fb.fitness, 0);
-  let selections = [];
-  const SELECTIONS_WANTED = 2;
 
-  // Continue until we have made two selections.
-  // This loop should not run more than twice.
-  while (selections.length < SELECTIONS_WANTED) {
-    // Choose a random value in the range from 0 to the sum of all
-    // of the fitness values of the organisms.
-    const randomValue = rng.range(0, totalFitness);
-    let accumulatedFitness = 0.0;
+  // Choose a random value in the range from 0 to the sum of all
+  // of the fitness values of the organisms.
 
-    // Iterate through all organisms,
-    // accumulating their fitness, until a selection is made.
-    for (let organism of organisms) {
-      // If the random value is in the proportional subrange
-      // of fitness of this chromosome
-      if (randomValue >= accumulatedFitness && randomValue < accumulatedFitness + organism.fitness) {
-        // select it
-        selections.push(organism);
-        // search for the next random selection
-        break;
-      } else {
-        accumulatedFitness += organism.fitness;
-      }
-    }
-  }
-
-  console.assert(selections.length === SELECTIONS_WANTED, selections);
-
-  return selections;
+  return [
+    selectOneByProportionateFitness(rng.range(0, totalFitness), organisms),
+    selectOneByProportionateFitness(rng.range(0, totalFitness), organisms),
+  ];
 }
