@@ -1,3 +1,5 @@
+/* @flow */
+import type {Base, Organism, RNG} from './types';
 import {breed, mutateChromosome} from './ga/reproduction';
 import {selectByProportionateFitness, selectByTournament} from './ga/selection';
 import Random from 'random-seed';
@@ -6,14 +8,44 @@ import {generatePool} from './ga/generator';
 
 
 /* eslint-disable no-new-func */
-function buildFitnessFunction(fitnessFunctionSource) {
-  return Function('chromosome', fitnessFunctionSource);
+function buildFitnessFunction(fitnessFunctionSource: string) {
+  return new Function('chromosome', fitnessFunctionSource);
 }
 
 /* eslint-enable no-new-func */
 
+type Settings = {
+  bases: Base[],
+  seed: number,
+  startingPopulation: number,
+  fitnessFunctionSource: string,
+  chromosomeLength: number,
+  selectionMechanism: string,
+  tournamentSize: number,
+  elitism: boolean,
+  selectionElitism: number,
+  crossoverChance: number,
+  mutationChance: number,
+};
+
+
+type Population = {organisms: Organism[]};
+
 export class GA {
-  constructor(settings) {
+  bases: Base[];
+  rng: RNG;
+  seed: number;
+  startingPopulation: number;
+  fitnessFn: Function;
+  chromosomeLength: number;
+  selectionMechanism: string;
+  tournamentSize: number;
+  elitism: number;
+  crossoverChance: number;
+  mutationChance: number;
+  population: Population;
+
+  constructor(settings: Settings) {
     this.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
 
     this.rng = Random.create(settings.seed);
@@ -50,8 +82,9 @@ export class GA {
     return {organisms};
   }
 
-  step(population) {
+  step(population: Population) {
     const {organisms} = population;
+    // assert organisms is sorted by fitness in descending order.
 
     // choose elite
     let pool = organisms.slice(0, Math.ceil(this.elitism * organisms.length));

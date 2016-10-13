@@ -1,24 +1,25 @@
+/* @flow */
+import type {Organism, RNG} from '../types';
+
+function takeRandomOrganismIndexes(rng, size, organismsLength) {
+  return Array(size)
+    // gotcha, map won't work on an array of undefined's
+    .fill(0)
+    .map(() => rng.intBetween(0, organismsLength - 1));
+}
 
 
 function tournamentChooseOne(rng, size, organisms) {
   console.assert(organisms.length > 0, organisms);
 
+  // assert organisms is sorted by fitness in descending order.
+
   // Choose a single chromosome by holding a tournament between `size` random
   // participant organisms in the `organisms`, and selecting the fittest.
-  let selections = Array(size)
-    // gotcha, map won't work on an array of undefined's
-    .fill(0)
-    .map(() => rng.intBetween(0, organisms.length - 1))
-    .map(position => organisms[position]);
+  let selectionIndex = Math.min(...takeRandomOrganismIndexes(rng, size, organisms.length));
 
   // Find the organism with the largest fitness
-  return selections.reduce((ca, cb) => {
-    if (ca.fitness > cb.fitness) {
-      return ca;
-    } else {
-      return cb;
-    }
-  });
+  return organisms[selectionIndex];
 }
 
 /*
@@ -28,7 +29,7 @@ function tournamentChooseOne(rng, size, organisms) {
  *
  * Returns a list of two Organism instances.
  */
-export function selectByTournament(rng, size, organisms) {
+export function selectByTournament(rng: RNG, size: number, organisms: Organism[]) {
   return [
     tournamentChooseOne(rng, size, organisms),
     tournamentChooseOne(rng, size, organisms)
@@ -72,7 +73,7 @@ function selectOneByProportionateFitness(targetValue, organisms) {
  *
  * This may select the same organism twice.
  */
-export function selectByProportionateFitness(rng, organisms) {
+export function selectByProportionateFitness(rng: RNG, organisms: Organism[]) {
   const totalFitness = organisms.reduce((acc, fb) => acc + fb.fitness, 0);
 
   // Choose a random value in the range from 0 to the sum of all

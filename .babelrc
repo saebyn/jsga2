@@ -4,7 +4,8 @@
     "es2015"
   ],
   "plugins": [
-    "transform-class-properties"
+    "transform-class-properties",
+    "transform-flow-strip-types"
   ],
   "env": {
     "test": {
@@ -14,7 +15,8 @@
     },
     "production": {
       "plugins": [
-        "transform-class-properties"
+        "transform-class-properties",
+        "transform-flow-strip-types"
       ],
       "presets": [
         [

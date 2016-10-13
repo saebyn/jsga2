@@ -23,17 +23,12 @@ function formatPercent(number) {
 
 function getDefaults() {
   return {
-
-    /* eslint-disable no-magic-numbers */
-    bases: [1, 2, 3, 4],
-
-    /* eslint-enable no-magic-numbers */
-
+    bases: ['0', '1'],
     seed: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
     startingPopulation: 100,
     fitnessFunctionSource: `return chromosome.reduce(
   function (accum, num) {
-    return accum + num;
+    return accum + parseInt(num, 10);
   },
   0
 ) / chromosome.length;`,

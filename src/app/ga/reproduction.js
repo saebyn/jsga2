@@ -1,3 +1,6 @@
+/* @flow */
+
+import type {Base, Chromosome, RNG} from '../types';
 import {randomElement} from './utils';
 
 
@@ -19,7 +22,7 @@ import {randomElement} from './utils';
  *
  * Maybe this isn't what we want? This is what the original implementation did though.
  */
-export function mutateChromosome(rng, bases, chance, chromosome) {
+export function mutateChromosome(rng: RNG, bases: Base[], chance: number, chromosome: Chromosome): Chromosome {
   let newChromosome = chromosome.slice();
 
   for (let locusIndex = 0; locusIndex < chromosome.length; locusIndex++) {
@@ -48,7 +51,7 @@ export function mutateChromosome(rng, bases, chance, chromosome) {
  * first chromosome.
  *
  */
-function crossoverChromosomes(rng, chance, chromosomeA, chromosomeB) {
+function crossoverChromosomes(rng: RNG, chance: number, chromosomeA: Chromosome, chromosomeB: Chromosome): Chromosome[] {
   if (Math.random() < chance) {
     // Get the length of the shorter of the two chromosomes to be
     // crossed-over.
@@ -78,7 +81,7 @@ function crossoverChromosomes(rng, chance, chromosomeA, chromosomeB) {
  * and then 7 and 1 are not). Chromosomes are not
  * crossed over with themselves.
  */
-export function breed(rng, mutator, crossoverChance, population) {
+export function breed(rng: RNG, mutator: Function, crossoverChance: number, population: Chromosome[]): Chromosome[] {
   let newChromosomes = [];
 
   /*

@@ -1,5 +1,4 @@
 
-
 export function *generatePool(chromosomeGenerator, fitnessFn) {
   for (;;) {
     const chromosome = [...chromosomeGenerator()];

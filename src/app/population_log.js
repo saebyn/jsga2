@@ -1,3 +1,13 @@
+/* @flow */
+import type {Organism, Population, PopulationWithStats} from './types';
+
+type ViewArgs = {
+  page: number,
+  pageSize: number,
+  generation: number,
+};
+
+type StatCategory = 'max' | 'min' | 'mean' | 'median';
 
 function isOdd(number) {
   return number % 2 !== 0;
@@ -15,7 +25,9 @@ function pluck(property) {
 
 
 export class PopulationLog {
-  constructor({organisms}, populations = []) {
+  populations: PopulationWithStats[];
+
+  constructor({organisms}: Population, populations: PopulationWithStats[] = []) {
     // population should be
     //  - an Array
     //  - containing objects like
@@ -49,7 +61,7 @@ export class PopulationLog {
     this.populations = [{organisms, stats}].concat(populations);
   }
 
-  append(population) {
+  append(population: Population) {
     return new PopulationLog(population, this.populations);
   }
 
@@ -57,11 +69,11 @@ export class PopulationLog {
     return this.populations[0];
   }
 
-  get length () {
+  get length (): number {
     return this.populations.length;
   }
 
-  getFitnessStats(category) {
+  getFitnessStats(category: StatCategory) {
     let stats = this.populations
       .map(pluck('stats'))
       .map(pluck(category));
@@ -71,7 +83,7 @@ export class PopulationLog {
     return stats;
   }
 
-  view({page, pageSize, generation}) {
+  view({page, pageSize, generation}: ViewArgs): Organism[] {
     if (pageSize) {
       const viewStart = page * pageSize;
       const viewEnd = (page + 1) * pageSize;

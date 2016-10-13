@@ -28,6 +28,7 @@ export class ChromosomesChart extends Component {
           (organism, index) =>
             <div key={index} style={style}>
               <ChromosomeAbstract baseColors={baseColors} chromosome={organism.chromosome} />
+              {organism.fitness}
             </div>
         )}
       </div>
