@@ -1,3 +1,4 @@
+/* @flow */
 
 export function *generatePool(chromosomeGenerator, fitnessFn) {
   for (;;) {

@@ -1,3 +1,4 @@
+/* @flow */
 /* eslint-disable */
 export interface RNG {
   random(): number;

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Canvas from 'react-canvas-component';
 
+
 export const HUE_RANGE = 360.0;
 export const HALF_HUE_RANGE = 180.0;
 

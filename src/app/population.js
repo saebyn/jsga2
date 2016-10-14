@@ -1,3 +1,4 @@
+/* @flow */
 import React, {Component} from 'react';
 
 import {ChromosomesChart} from './chromosomes_chart';
@@ -24,38 +25,6 @@ Validation failed.`
 
 
 export class Population extends Component {
-  constructor(props) {
-    super(props);
-
-    const settings = JSON.parse(props.location.query.settings);
-
-    this.state = {
-      ga: new GA(settings),
-      generation: 0,
-      page: 0,
-      pageSize: 36,
-    };
-
-    // separated out just so I don't have to have create ga first,
-    // and give it a name that isn't shadowed by handleStep below.
-    this.state.log = new PopulationLog(this.state.ga.spawn());
-
-    this.handleStep = () => {
-      const {log, ga} = this.state;
-
-      this.setState({
-        log: log.append(ga.step(log.last())),
-      });
-    };
-
-    this.handleGotoPage = (page) =>
-      this.setState({page});
-
-    this.handleGenerationSwitch = (generation) => {
-      this.setState({generation});
-    };
-  }
-
   static propTypes = {
       location: React.PropTypes.shape({
           query: React.PropTypes.shape({
@@ -64,14 +33,47 @@ export class Population extends Component {
       }),
   }
 
+  state: {
+    ga: GA,
+    generation: number,
+    log: PopulationLog,
+    page: number,
+    pageSize: number,
+  }
+
+  constructor(props: Object) {
+    super(props);
+
+    const settings = JSON.parse(props.location.query.settings);
+
+    const firstGA = new GA(settings);
+
+    this.state = {
+      ga: firstGA,
+      generation: 0,
+      log: new PopulationLog(firstGA.spawn()),
+      page: 0,
+      pageSize: 36,
+    };
+
+    (this:any).handleStep = this.handleStep.bind(this);
+    (this:any).handleGotoPage = this.handleGotoPage.bind(this);
+    (this:any).handleGenerationSwitch = this.handleGenerationSwitch.bind(this);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
       if (nextProps.location.query.settings !== this.props.location.query.settings) {
           return true;
       }
 
-      if (nextState.ga !== this.state.ga) {
-          return true;
+      const fields = ['ga', 'log', 'generation', 'page', 'pageSize'];
+
+      for (let field of fields) {
+        if (nextState[field] !== this.state[field]) {
+            return true;
+        }
       }
+
 
       if (nextState.log !== this.state.log) {
           return true;
@@ -132,6 +134,22 @@ export class Population extends Component {
         </div>
       </div>
     );
+  }
+
+  handleStep() {
+    const {log, ga} = this.state;
+
+    this.setState({
+      log: log.append(ga.step(log.last())),
+    });
+  }
+
+  handleGotoPage(page) {
+    this.setState({page});
+  }
+
+  handleGenerationSwitch(generation) {
+    this.setState({generation});
   }
 }
 

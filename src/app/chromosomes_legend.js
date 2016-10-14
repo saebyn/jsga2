@@ -1,5 +1,10 @@
 import React, {Component} from 'react';
 
+/*
+ * Skipping flow for this file for now, since it doesn't understand
+ * [...Array(generations).keys()]
+ */
+
 
 export class ChromosomesLegend extends Component {
   static propTypes = {

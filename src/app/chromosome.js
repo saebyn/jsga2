@@ -1,5 +1,7 @@
+/* @flow */
 import React, {Component} from 'react';
 
+import type {Base} from './types';
 import {contrastHue} from './chromosome_abstract';
 
 
@@ -9,7 +11,7 @@ export class Chromosome extends Component {
     chromosome: React.PropTypes.array.isRequired,
   }
 
-  getBaseStyle(thisBase) {
+  getBaseStyle(thisBase: Base) {
     const hue = this.props.baseColors.get(thisBase);
 
     return {
