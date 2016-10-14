@@ -24,6 +24,15 @@ Validation failed.`
 }
 
 
+type PopulationState = {
+  ga: GA,
+  generation: number,
+  log: PopulationLog,
+  page: number,
+  pageSize: number,
+};
+
+
 export class Population extends Component {
   static propTypes = {
       location: React.PropTypes.shape({
@@ -33,13 +42,7 @@ export class Population extends Component {
       }),
   }
 
-  state: {
-    ga: GA,
-    generation: number,
-    log: PopulationLog,
-    page: number,
-    pageSize: number,
-  }
+  state: PopulationState
 
   constructor(props: Object) {
     super(props);
@@ -61,7 +64,7 @@ export class Population extends Component {
     (this:any).handleGenerationSwitch = this.handleGenerationSwitch.bind(this);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: Object, nextState: PopulationState) {
       if (nextProps.location.query.settings !== this.props.location.query.settings) {
           return true;
       }
@@ -144,11 +147,11 @@ export class Population extends Component {
     });
   }
 
-  handleGotoPage(page) {
+  handleGotoPage(page: number) {
     this.setState({page});
   }
 
-  handleGenerationSwitch(generation) {
+  handleGenerationSwitch(generation: number) {
     this.setState({generation});
   }
 }

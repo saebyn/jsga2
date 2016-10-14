@@ -2,8 +2,8 @@
 import type {Organism, Population, PopulationWithStats} from './types';
 
 type ViewArgs = {
-  page: number,
-  pageSize: number,
+  page?: number,
+  pageSize?: number,
   generation: number,
 };
 
@@ -17,8 +17,8 @@ function sum(numbers) {
   return numbers.reduce((aa, bb) => aa + bb, 0);
 }
 
-function pluck(property) {
-  return function pluckValue(value) {
+function pluck(property: string) {
+  return function pluckValue(value: Object) {
     return value[property];
   };
 }
@@ -85,8 +85,11 @@ export class PopulationLog {
 
   view({page, pageSize, generation}: ViewArgs): Organism[] {
     if (pageSize) {
-      const viewStart = page * pageSize;
-      const viewEnd = (page + 1) * pageSize;
+      let pageInt = page || 0;
+      let pageSizeInt = pageSize || 0;
+
+      const viewStart = pageInt * pageSizeInt;
+      const viewEnd = (pageInt + 1) * pageSizeInt;
 
       return this.populations[generation].organisms.slice(viewStart, viewEnd);
     } else {
