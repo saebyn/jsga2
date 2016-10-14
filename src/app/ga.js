@@ -43,7 +43,6 @@ export class GA {
   elitism: number;
   crossoverChance: number;
   mutationChance: number;
-  population: Population;
 
   constructor(settings: Settings) {
     this.fitnessFn = buildFitnessFunction(settings.fitnessFunctionSource);
@@ -58,8 +57,6 @@ export class GA {
     this.selectionMechanism = settings.selectionMechanism;
     this.crossoverChance = settings.crossoverChance;
     this.mutationChance = settings.mutationChance;
-
-    this.population = this.spawn();
   }
 
   spawn() {
@@ -96,9 +93,6 @@ export class GA {
     // breeding each pair
     while (pool.length < organisms.length) {
       const selectedChromosomes = this.select(
-        this.rng,
-        this.selectionMechanism,
-        this.tournamentSize,
         organisms
       ).map(
         (organism) => organism.chromosome
@@ -122,18 +116,12 @@ export class GA {
     return {organisms: pool};
   }
 
-  count() {
-    return this.population.organisms.length;
-  }
-
   getBases() {
     return this.bases;
   }
 
   // Internal methods
-  select() {
-    const {organisms} = this.population;
-
+  select(organisms: Organism[]) {
     if (this.selectionMechanism === 'tournament') {
       return selectByTournament(this.rng, this.tournamentSize, organisms);
     } else if (this.selectionMechanism === 'fitness-proportionate') {
