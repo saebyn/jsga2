@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 
 import {ChromosomesChart} from './chromosomes_chart';
 import {ChromosomesLegend} from './chromosomes_legend';
+import {FitnessChart} from './fitness_chart';
 import {GA} from './ga';
 import {Paginate} from './paginate';
 import {PopulationLog} from './population_log';
@@ -77,23 +78,6 @@ export class Population extends Component {
         }
       }
 
-
-      if (nextState.log !== this.state.log) {
-          return true;
-      }
-
-      if (nextState.generation !== this.state.generation) {
-          return true;
-      }
-
-      if (nextState.page !== this.state.page) {
-          return true;
-      }
-
-      if (nextState.pageSize !== this.state.pageSize) {
-          return true;
-      }
-
       return false;
   }
 
@@ -109,15 +93,20 @@ export class Population extends Component {
           <Runner onStep={this.handleStep} />
         </div>
         <div className="row">
-          <ChromosomesLegend
-            generation={generation}
-            log={log}
-            page={page}
-            pageSize={pageSize}
-            onSwitchGeneration={this.handleGenerationSwitch}
-            baseColors={baseColors}
-            bases={bases}
-            />
+          <div className="col-sm-6">
+            <ChromosomesLegend
+              generation={generation}
+              log={log}
+              page={page}
+              pageSize={pageSize}
+              onSwitchGeneration={this.handleGenerationSwitch}
+              baseColors={baseColors}
+              bases={bases}
+              />
+          </div>
+          <div className="col-sm-6">
+            <FitnessChart log={log} />
+          </div>
         </div>
         <div className="row">
           <ChromosomesChart

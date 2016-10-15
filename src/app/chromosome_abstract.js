@@ -36,28 +36,33 @@ export class ChromosomeAbstract extends Component {
 
   drawCanvas({ctx}) {
     const {width, height} = ctx.canvas;
-    const chromosome = this.props.chromosome;
+    const {baseColors, chromosome} = this.props;
     const sideLength = Math.ceil(Math.sqrt(chromosome.length));
     const cellSize = Math.min(width, height) / sideLength;
 
     ctx.save();
     ctx.clearRect(0, 0, width, height);
 
-    for (let baseIndex = 0; baseIndex < chromosome.length; baseIndex++) {
-      const base = chromosome[baseIndex];
-
+    // iterate more times over chromosome, but
+    // only change fill style minimally.
+    for (let base of baseColors.keys()) {
       ctx.fillStyle = this.getBaseColor(base);
-      ctx.fillRect(
-        baseIndex % sideLength * cellSize,
-        Math.floor(baseIndex / sideLength) * cellSize,
-        cellSize,
-        cellSize
-      );
+
+      for (let baseIndex = 0; baseIndex < chromosome.length; baseIndex++) {
+        if (chromosome[baseIndex] === base) {
+          ctx.fillRect(
+            baseIndex % sideLength * cellSize,
+            Math.floor(baseIndex / sideLength) * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
+      }
     }
+
 
     ctx.restore();
   }
-
 
   getBaseColor(thisBase) {
     const hue = this.props.baseColors.get(thisBase).hue;
