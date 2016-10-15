@@ -50,8 +50,8 @@ export class ChromosomeAbstract extends Component {
       ctx.fillRect(
         baseIndex % sideLength * cellSize,
         Math.floor(baseIndex / sideLength) * cellSize,
-        sideLength,
-        sideLength
+        cellSize,
+        cellSize
       );
     }
 
