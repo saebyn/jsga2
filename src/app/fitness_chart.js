@@ -15,7 +15,7 @@ function scaleY(yval, ymax) {
   if (ymax === 0) {
     return 0;
   } else {
-    return (yval / ymax * HEIGHT);
+    return HEIGHT - (yval / ymax * HEIGHT);
   }
 }
 
@@ -29,13 +29,15 @@ export class FitnessChart extends Component {
     const {log: {populations}} = this.props;
 
     const points = populations
-      .map(({stats}, index) => [index, stats.mean]);
+      .map(({stats}, index) => stats.mean);
 
     const xmax = populations.length;
     const ymax = 1;
 
+    points.reverse();
+
     const pointsString = points
-      .map(([xval, yval]) => ([scaleX(xval, xmax), scaleY(yval, ymax)]))
+      .map((yval, xval) => ([scaleX(xval, xmax), scaleY(yval, ymax)]))
       .map((point) => point.join(','))
       .join(' ');
 
