@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {PopulationLog} from './population_log';
 
 
-const WIDTH = 500;
+const WIDTH = 300;
 const HEIGHT = 100;
 
 
